@@ -1,0 +1,72 @@
+hacemos npm init dentro de la carpeta del proyecto 
+
+// buscamos en google el lite server de papa 
+
+instalamos 
+npm install lite-server --save-dev
+instala y monta un servidor 
+
+para que corra en los scrips deñ pack json copiamos 
+
+# Inside package.json...
+  "scripts": {    
+    "dev": "lite-server"
+  },
+
+  ejecutamos en la term npm run dev 
+ responde can not get  ( no tiene el index.html) 
+
+ creamos el index 
+
+ con  !
+
+ y ya corre bien 
+ cambiamos el puerto 
+ creamos el file ls-config.json en el proyecto 
+ con el puerto deseado 
+ en el package json le decimos al script lite-server -c ls-config.json
+ que es de donde tiene que tomar el puerto 
+
+ reiniciamos el server ls 
+
+desde google signin for websites 
+https://developers.google.com/identity/sign-in/web/sign-in
+importamos la lib script  de gogle sign-in  y el meta tag 
+la pegamos en el head del index 
+
+en el meta dentro de content pegamos el cliente ID
+y copiamos el boton de inicio 
+
+creamos un script y pegamos dentro de el  el profile information
+
+en este momento ya nos podems autenticar por google 
+
+pero nos falta que ggole nos de un token , no vamos a enviar el id , porque no es seguro 
+
+en la pagina de sign in hacer click en send id token 
+copiamos ID token to you server 
+
+lo pegamos en el profile del index 
+
+ya nos devuelve el token 
+
+sign out 
+
+copiamos de la pagina y pegamos en el index 
+
+///////// DOCUMENTACION DEL POSTMAN /////////
+
+
+click derecho en la carpeta dnde estan las peticiones 
+ publis doc 
+
+ 
+
+
+
+
+
+
+
+
+
