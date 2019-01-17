@@ -93,7 +93,7 @@ function getGroups(req, resp) {
                 })
             }
 
-            ChatGroup.count({}, (err, conteo) => {
+            ChatGroup.countDocuments({}, (err, conteo) => {
 
                 resp.status(200).json({ // ok 
                     ok: true,

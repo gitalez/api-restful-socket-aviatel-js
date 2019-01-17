@@ -32,8 +32,8 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
 // 30 dias
 // 1000 en ms 
 
-
-process.env.CADUCIDAD_TOKEN = '7d';
+// minimo 2 horas , porque el front end verifica con resolucioon de 1 hora
+process.env.CADUCIDAD_TOKEN = '4h'; // 4 horas
 //process.env.CADUCIDAD_TOKEN = 60 * 60 * 24 * 30 * 1000; //  equivale a 1 mes
 
 // =============================

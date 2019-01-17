@@ -23,7 +23,7 @@ api.get('/hospital/:id', verificaToken, HospitalController.getHospital);
 api.post('/hospital', verificaToken, HospitalController.crearHospital);
 
 //obtengo todos los hospitales [verificaToken, verificaAdmin_Role_Super],
-api.get('/hospitales', HospitalController.getHospitales);
+api.get('/hospitales', verificaToken,  HospitalController.getHospitales);
 
 // actualiza un hospital mediante su id [verificaToken, verificaAdmin_Role_Super],
 api.put('/hospital/:id', verificaToken, HospitalController.updateHospital);

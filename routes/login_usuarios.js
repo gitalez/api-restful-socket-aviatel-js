@@ -4,6 +4,8 @@ const express = require('express');
 
 const LoginUsuarioController = require('../controllers/login_usuarios'); // cargamos el controlador usuarios.js
 
+const { verificaToken } = require('../middlewares/autenticacion');
+
 var api = express.Router(); // cargamos el router de express
 // asi poedmos crear rutas
 
@@ -17,6 +19,9 @@ var api = express.Router(); // cargamos el router de express
 // hace log de un usuario y devuelve un ID
 api.post('/login-usuario', LoginUsuarioController.loginUsuario);
 
-api.post('/login-usuario-google', LoginUsuarioController.loginUsuarioGoogle)
+api.post('/login-usuario-google', LoginUsuarioController.loginUsuarioGoogle);
+
+api.get('/login-renovar-token', verificaToken, LoginUsuarioController.renovarToken);
+
 
 module.exports = api;

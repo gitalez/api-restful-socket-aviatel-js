@@ -23,7 +23,7 @@ api.get('/medico/:id', verificaToken, MedicoController.getMedico);
 api.post('/medico', verificaToken, MedicoController.crearMedico);
 
 //obtengo todos los medicos [verificaToken, verificaAdmin_Role_Super],
-api.get('/medicos', MedicoController.getMedicos);
+api.get('/medicos', verificaToken, MedicoController.getMedicos);
 
 // actualiza un medico mediante su id [verificaToken, verificaAdmin_Role_Super],
 api.put('/medico/:id', verificaToken, MedicoController.updateMedico);

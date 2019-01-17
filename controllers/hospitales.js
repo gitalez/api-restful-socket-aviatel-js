@@ -19,25 +19,29 @@ let Hospital = require('../models/hospitales'); // cargamos el modelo
 // en post man : http://localhost:3000/api/hospital/123
 
 
-function getHospital(req, res) {
+function getHospital(req, resp) {
 
     let getHospitalId = req.params.id;
 
-    Hospital.findById(getHospitalId, (err, hospital) => {
+    Hospital.findById(getHospitalId)
+    .populate('usuario', 'nombre imagen email')
+    .exec((err, hospital) => {
 
         if (err) {
             return resp.status(500).json({
                 ok: false,
-                mensaje: `no se encuentra el hospital con el id: ${id}`
+                mensaje: 'error al buscar hospital'
+                
             });
         }
         if (!hospital) {
-            return res.status(404).json({
+            return resp.status(404).json({
                 ok: false,
-                mensaje: 'no hay hospital'
+                mensaje: `no se encuentra el hospital con el id: ${getHospitalId}`
+               
             });
         }
-        res.status(200).json({
+        resp.status(200).json({
             ok: true,
             mensaje: 'hospital encontrado',
             hospital: hospital
@@ -54,7 +58,7 @@ function getHospital(req, res) {
 //http: //localhost:3000/api/hospitales
 
 
-function getHospitales(req, res) {
+function getHospitales(req, resp) {
 
     // los query son los optativos en la url 
 
@@ -79,21 +83,21 @@ function getHospitales(req, res) {
         .exec((err, hospitales) => {
 
             if (err) {
-                return res.status(500).json({ // internal error server
+                return resp.status(500).json({ // internal error server
                     ok: false,
                     mensaje: 'error en base de datos de hospitales',
                     error: err
                 })
             }
             if (!hospitales) {
-                return res.status(404).json({ // not found
+                return resp.status(404).json({ // not found
                     ok: false,
                     mensaje: 'no hay hospitales en la base de datos'
                 })
             }
-            Hospital.count({}, (err, conteo) => {
+            Hospital.countDocuments({}, (err, conteo) => {
 
-                res.status(200).json({ // ok 
+                resp.status(200).json({ // ok 
                     ok: true,
                     hospitales: hospitales,
                     total: conteo
@@ -119,7 +123,7 @@ function getHospitales(req, res) {
 // pero existe una lib que toma la info se envia  y crea un obj de js : body-parser que es un middle
 
 
-function crearHospital(req, res) {
+function crearHospital(req, resp) {
 
 
     console.log("estamos creando un hospital");
@@ -137,7 +141,7 @@ function crearHospital(req, res) {
     hospital.save((err, hospitalDB) => {
 
         if (err) { // colocando el return se sale y no sigue 
-            return res.status(400).json({ // bad request
+            return resp.status(400).json({ // bad request
                 ok: false,
                 mensaje: 'error al crear un hospital',
                 error: err
@@ -145,12 +149,12 @@ function crearHospital(req, res) {
         }
 
         if (!hospitalDB) {
-            return res.status(404).json({ // not found 
+            return resp.status(404).json({ // not found 
                 ok: false,
                 mensaje: 'no se pudo crear el hospital',
             });
         }
-        res.status(201).json({ // recurso creado
+        resp.status(201).json({ // recurso creado
             ok: true,
             hospital: hospitalDB,
             usuarioCreador: req.usuario // es el usuario que esta en el token 
@@ -168,7 +172,7 @@ function crearHospital(req, res) {
 // en postman http://localhost:3000/api/hospital/121
 // en el body llenamos distintas key y values en formato urlencoded
 
-function updateHospital(req, res) {
+function updateHospital(req, resp) {
     // metodo put  ...llega por body
 
     let update = req.body;
@@ -177,7 +181,7 @@ function updateHospital(req, res) {
     Hospital.findById(hospitalId, (err, hospitalDB) => {
 
         if (err) {
-            return res.status(500).json({ // internal server
+            return resp.status(500).json({ // internal server
                 ok: false,
                 mensaje: 'el hospital con el id' + hospitalId + 'no existe',
                 errors: err
@@ -185,7 +189,7 @@ function updateHospital(req, res) {
         }
 
         if (!hospitalDB) {
-            return res.status(400).json({ // bad request
+            return resp.status(400).json({ // bad request
                 ok: false,
                 mensaje: 'no se pudo actualizar el hospital con el id :' + hospitalId
             });
@@ -196,13 +200,13 @@ function updateHospital(req, res) {
         hospitalDB.save((err, hospitalUpdated) => {
 
             if (err) {
-                return res.status(400).json({ // bad request
+                return resp.status(400).json({ // bad request
                     ok: false,
                     mensaje: 'error al actualizar el hospital',
                     error: err
                 });
             }
-            res.status(200).json({ // OK
+            resp.status(200).json({ // OK
                 update: true,
                 hospital: hospitalUpdated
             });
@@ -219,32 +223,32 @@ function updateHospital(req, res) {
 ////////////////////////////////////////////////////
 // en postman http://localhost:3000/api/hospital/121
 
-function borrarHospital(req, res) {
+function borrarHospital(req, resp) {
 
     var hospitalId = req.params.id;
 
     Hospital.findById(hospitalId, (err, hospital) => {
 
         if (err) {
-            return res.status(500).json({
+            return resp.status(500).json({
                 ok: false,
-                mensaje: `no se encuentra el hospital con el id: ${id}`
+                mensaje: `no se encuentra el hospital con el id: ${hospitalId}`
             });
         }
         if (!hospital) {
-            return res.status(404).json({
+            return resp.status(404).json({
                 ok: false,
                 mensaje: 'no hay hospital para borrar'
             });
         }
         hospital.remove((err) => {
             if (err) {
-                return res.status(500).json({
+                return resp.status(500).json({
                     ok: false,
                     mensaje: 'no se ha podido borrar el hospital'
                 });
             }
-            res.status(200).json({
+            resp.status(200).json({
                 ok: true,
                 mensaje: 'hospital borrado',
                 hospital: hospital
@@ -263,7 +267,7 @@ function borrarHospital(req, res) {
 /////////////////////////////////////////////////////////////////////
 // en post man : http://localhost:3000/api/hospitales/santollani
 
-function buscarHospitales(req, res) {
+function buscarHospitales(req, resp) {
 
     let termino = req.params.termino;
     // mandamos una expresion regular para ser usada como filtro
@@ -276,13 +280,13 @@ function buscarHospitales(req, res) {
     Hospital.find({ nombre: regex })
         .exec((err, hospitales) => {
             if (err) { // colocando el return se sale y no sigue 
-                return res.status(500).json({
+                return resp.status(500).json({
                     ok: false,
                     mensaje: 'error en base de datos de hospitales',
                     error: err
                 });
             }
-            res.json({
+            resp.json({
                 ok: true,
                 hospitales
             })

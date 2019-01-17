@@ -7,7 +7,7 @@ const express = require('express');
 
 const BusquedaController = require('../controllers/busquedas'); // cargamos el controlador usuarios.js
 
-const { verificaToken, verificaAdmin_Role_Super } = require('../middlewares/autenticacion');
+const { verificaToken } = require('../middlewares/autenticacion');
 
 var api = express.Router(); // cargamos el router de express
 // asi poedmos crear rutas
@@ -19,7 +19,7 @@ var api = express.Router(); // cargamos el router de express
 
 // rutas 
 // [verificaToken, verificaAdmin_Role_Super],
-api.get('/busquedas/todo/:bus', verificaToken,  BusquedaController.buscarAlgo);
+api.get('/busquedas/todo/:bus', verificaToken, BusquedaController.buscarAlgo);
 api.get('/busquedas/coleccion/:tabla/:bus', verificaToken, BusquedaController.buscarPorColeccion);
 
 

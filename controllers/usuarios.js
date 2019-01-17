@@ -22,7 +22,7 @@ let Usuario = require('../models/usuarios'); // cargamos el modelo
 // en post man : http://localhost:3000/api/usuario/123
 
 
-function getUsuario(req, res) {
+function getUsuario(req, resp) {
 
     let getUsuarioId = req.params.id;
 
@@ -31,16 +31,18 @@ function getUsuario(req, res) {
         if (err) {
             return resp.status(500).json({
                 ok: false,
-                mensaje: `no se encuentra el usuario con el id: ${id}`
+                mensaje: 'error al buscar usuario'
+               
             });
         }
         if (!usuario) {
-            return res.status(404).json({
+            return resp.status(404).json({
                 ok: false,
-                mensaje: 'no hay usuario'
+                mensaje: `no se encuentra el usuario con el id: ${getUsuarioId}`
+                
             });
         }
-        res.status(200).json({
+        resp.status(200).json({
             ok: true,
             mensaje: 'usuario encontrado',
             usuario: usuario
@@ -57,7 +59,7 @@ function getUsuario(req, res) {
 //http: //localhost:3000/api/usuarios
 
 //http: //localhost:3000/api/usuarios?desde=3
-function getUsuarios(req, res) {
+function getUsuarios(req, resp) {
 
     // los query son los optativos en la url 
 
@@ -83,21 +85,21 @@ function getUsuarios(req, res) {
         .exec((err, usuarios) => {
 
             if (err) {
-                return res.status(500).json({ // internal error server
+                return resp.status(500).json({ // internal error server
                     ok: false,
                     mensaje: 'error en base de datos de usuarios',
                     error: err
                 })
             }
             if (!usuarios) {
-                return res.status(404).json({ // not found
+                return resp.status(404).json({ // not found
                     ok: false,
                     mensaje: 'no hay usuarios en la base de datos'
                 })
             }
-            Usuario.count({}, (err, conteo) => {
+            Usuario.countDocuments({}, (err, conteo) => {
 
-                res.status(200).json({ // ok 
+                resp.status(200).json({ // ok 
                     ok: true,
                     usuarios: usuarios,
                     total: conteo
@@ -125,7 +127,7 @@ function getUsuarios(req, res) {
 // encriptar en una sola via significa que si aun alguien obtuviera la cadena encriptada no sera posible 
 // volverla a su estado original
 
-function crearUsuario(req, res) {
+function crearUsuario(req, resp) {
 
 
     console.log("estamos creando un usuario");
@@ -155,7 +157,7 @@ function crearUsuario(req, res) {
     usuario.save((err, usuarioDB) => {
 
         if (err) { // colocando el return se sale y no sigue 
-            return res.status(400).json({ // bad request
+            return resp.status(400).json({ // bad request
                 ok: false,
                 mensaje: 'error al crear un usuario',
                 error: err
@@ -163,12 +165,12 @@ function crearUsuario(req, res) {
         }
 
         if (!usuarioDB) {
-            return res.status(404).json({ // not found 
+            return resp.status(404).json({ // not found 
                 ok: false,
                 mensaje: 'no se pudo crear el usuario',
             });
         }
-        res.status(201).json({ // recurso creado
+        resp.status(201).json({ // recurso creado
             ok: true,
             usuario: usuarioDB,
             usuarioSolicitante: req.usuario // es el usuario que esta en el token 
@@ -186,7 +188,7 @@ function crearUsuario(req, res) {
 // en postman http://localhost:3000/api/usuario/121
 // en el body llenamos distintas key y values en formato urlencoded
 
-function updateUsuario(req, res) {
+function updateUsuario(req, resp) {
     // metodo put  ...llega por body
 
     var update = req.body;
@@ -205,7 +207,7 @@ function updateUsuario(req, res) {
     Usuario.findById(usuarioId, (err, usuarioDB) => {
 
         if (err) {
-            return res.status(500).json({ // internal server
+            return resp.status(500).json({ // internal server
                 ok: false,
                 mensaje: 'el usuario con el id' + usuarioId + 'no existe',
                 errors: err
@@ -213,7 +215,7 @@ function updateUsuario(req, res) {
         }
 
         if (!usuarioDB) {
-            return res.status(400).json({ // bad request
+            return resp.status(400).json({ // bad request
                 ok: false,
                 mensaje: 'no se pudo actualizar el usuario con el id :' + usuarioId
             });
@@ -238,16 +240,17 @@ function updateUsuario(req, res) {
         usuarioDB.save((err, usuarioUpdated) => {
 
             if (err) {
-                return res.status(400).json({ // bad request
+                return resp.status(400).json({ // bad request
                     ok: false,
                     mensaje: 'error al actualizar el usuario',
                     error: err
                 });
             }
             usuarioUpdated.password = ':)';
-            res.status(200).json({ // OK
+            resp.status(200).json({ // OK
                 update: true,
                 usuario: usuarioUpdated,
+                usuarioSolicitante: req.usuario, // es el usuario que esta en el token 
                 pass: usuarioUpdated.password
             });
         });
@@ -263,32 +266,32 @@ function updateUsuario(req, res) {
 ////////////////////////////////////////////////////
 // en postman http://localhost:3000/api/usuario/121
 
-function borrarUsuario(req, res) {
+function borrarUsuario(req, resp) {
 
     var usuarioId = req.params.id;
 
     Usuario.findById(usuarioId, (err, usuario) => {
 
         if (err) {
-            return res.status(500).json({
+            return resp.status(500).json({
                 ok: false,
-                mensaje: `no se encuentra el usuario con el id: ${id}`
+                mensaje: `no se encuentra el usuario con el id: ${usuarioId}`
             });
         }
         if (!usuario) {
-            return res.status(404).json({
+            return resp.status(404).json({
                 ok: false,
                 mensaje: 'no hay usuario para borrar'
             });
         }
         usuario.remove((err) => {
             if (err) {
-                return res.status(500).json({
+                return resp.status(500).json({
                     ok: false,
                     mensaje: 'no se ha podido borrar el usuario'
                 });
             }
-            res.status(200).json({
+            resp.status(200).json({
                 ok: true,
                 mensaje: 'usuario borrado',
                 usuario: usuario
@@ -306,7 +309,7 @@ function borrarUsuario(req, res) {
 ////////////////////////////////////////////////////
 // en postman http://localhost:3000/api/usuario-disable/121
 
-function disableUsuario(req, res) {
+function disableUsuario(req, resp) {
 
     // anular un usuario 
     // en lugar de borrarlo cambiamos el estado
@@ -316,14 +319,14 @@ function disableUsuario(req, res) {
     Usuario.findById(id, (err, usuarioDB) => {
 
         if (err) { // colocando el return se sale y no sigue 
-            return res.status(500).json({
+            return resp.status(500).json({
                 ok: false,
                 error: err
             });
         }
 
         if (!usuarioDB) {
-            return res.status(400).json({
+            return resp.status(400).json({
                 ok: false,
                 error: {
                     mensaje: 'no existe usuario con ese ID'
@@ -336,12 +339,12 @@ function disableUsuario(req, res) {
         usuarioDB.save((err, usuarioDisable) => {
 
             if (err) { // colocando el return se sale y no sigue 
-                return res.status(500).json({
+                return resp.status(500).json({
                     ok: false,
                     error: err
                 });
             }
-            res.status(201).json({ // 201 es cuando se crea un nuevo registro
+            resp.status(201).json({ // 201 es cuando se crea un nuevo registro
                 ok: true,
                 usuario: usuarioDisable
             })
@@ -358,7 +361,7 @@ function disableUsuario(req, res) {
 /////////////////////////////////////////////////////////////////////
 // en post man : http://localhost:3000/api/usuarios/juan
 
-function buscarUsuarios(req, res) {
+function buscarUsuarios(req, resp) {
 
     let termino = req.params.termino;
     // mandamos una expresion regular para ser usada como filtro
@@ -371,12 +374,12 @@ function buscarUsuarios(req, res) {
     Usuario.find({ nombre: regex })
         .exec((err, usuarios) => {
             if (err) { // colocando el return se sale y no sigue 
-                return res.status(500).json({
+                return resp.status(500).json({
                     ok: false,
                     error: err
                 });
             }
-            res.json({
+            resp.json({
                 ok: true,
                 usuarios
             })

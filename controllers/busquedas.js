@@ -104,7 +104,7 @@ function buscarPorColeccion(req, res) {
 // en post man : http://localhost:3000/api/busquedas/todo/hospital
 // en post man : http://localhost:3000/api/busquedas/todo/manu
 
-function buscarAlgo(req, res) {
+function buscarAlgo(req, resp) {
 
     // bus es lo que viene en la url y que esta declarado en el get 
     // la ruta es : 
@@ -128,7 +128,7 @@ function buscarAlgo(req, res) {
     ])
 
     .then(respuestas => { // then recibe un array de respuestas para cada una de las promesas
-        res.status(200).json({
+        resp.status(200).json({
             ok: true,
             modulos: respuestas[0],
             controles: respuestas[1],
@@ -189,7 +189,7 @@ function buscarUsuarios(busqueda, regex) {
     return new Promise((resolve, reject) => {
 
             // al poner 2do argumento , no traigo el pass
-        Usuario.find({}, 'nombre email estado ') // enviamos un obj vacio y buscamos por nombre email  etc : es lo que quiero traer , es lo que va a mostrar 
+        Usuario.find({}, 'nombre imagen ') // enviamos un obj vacio y buscamos por nombre email  etc : es lo que quiero traer , es lo que va a mostrar 
             .or([{ 'nombre': regex }, { 'email': regex }]) // en cambio aqui envio un array de condiciones para buscar, busco por email y nombre
             .exec((err, usuarios) => {
 
@@ -207,8 +207,8 @@ function buscarHospitales(busqueda, regex){
 
     return new Promise((resolve, reject) => {
 
-        Hospital.find({nombre: regex}) //  buscamos por nombre , al ser una sola columna  no pongo el .or ,  aqui traigo toda la info del hoatital , si quiero solo traer una parte pongo el sdo argumento 
-            .populate('usuario', 'nombre email') // se pueden poner mas populate de otras colecciones
+        Hospital.find({nombre: regex},'nombre imagen') //  buscamos por nombre , al ser una sola columna  no pongo el .or ,  aqui traigo toda la info del hoatital , si quiero solo traer una parte pongo el sdo argumento 
+            .populate('usuario', 'nombre') // se pueden poner mas populate de otras colecciones
             .exec((err, hospitales) => {
 
                 if (err) {
@@ -227,7 +227,7 @@ function buscarMedicos(busqueda, regex){
 
     return new Promise((resolve, reject) => {
 
-        Medico.find({nombre: regex}) // buscamos por nombre
+        Medico.find({nombre: regex}, 'nombre imagen') // buscamos por nombre
         .populate('usuario', 'nombre email') // se pueden poner mas populate de otras colecciones  
         .populate('hospital', 'nombre ') // se pueden poner mas populate de otras colecciones
         .exec((err, medicos) => {

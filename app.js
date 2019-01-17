@@ -15,7 +15,7 @@ app.use(fileUpload());
 /// server-index config 
 // esto sirve para ver el contenido del folder upload
 // hacemos localhost:3000/uploads
-//nos abre un navegador , para navegar entre los  folders
+// nos abre un navegador , para navegar entre los  folders
 // sirve o no sirve , 
 // cualquier chabon podra ver y modificar esas imagenes 
 
@@ -65,19 +65,22 @@ app.use(bodyParser.json()); // lo convierte a json
 // introducimos un middle propio  para cuando trabajemos con nuestro cliente rest y no postman 
 // so para no tener problemas con las cabeceras put y delete
 
-// buscar cors en enable-cors.org 
-//https://enable-cors.org/server_expressjs.html
+// buscar cors en enable-cors.org ,
+//https://enable-cors.org/server_expressjs.html,  pestaña server 
+
+// 
+
 
 app.use((req, resp, next) => { // se carga siempre y cuando se haga una peticion a nuestra api
 
     // el parametro next nos permite salir de la funcion cuando termine
 
-    resp.header('Access-Control-Allow-Origin', '*'); //  cualquiera puede hacer peticiones a nustra api
+    resp.header('Access-Control-Allow-Origin', '*'); //  cualquiera puede hacer peticiones a nuestra api
     // si solo se permitiria hacer peticiones desde un dominio especifico , en lugar de * le indicamos la url
 
     // configuramos los headers
     // las cabeceras permitidas son :
-    resp.header('Access-Control-Allow-Headers', ' Authorization, X-API-KEY, Origin, X-Requested-With,Content-Type, Accept, Access-Control-Allow-Request-Method');
+    resp.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
 
     // configuramos los metodos que nos pueden llegar ( permitidos )
     resp.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,PUT,DELETE');

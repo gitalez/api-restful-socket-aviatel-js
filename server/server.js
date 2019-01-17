@@ -45,11 +45,13 @@ mongoose.connect(process.env.URLDB,{ useNewUrlParser: true, useCreateIndex: true
     console.log('base de datos ONLINE');
 });
 
+ var date = new Date();
 
 server.listen(process.env.PORT, (err) => {
 
     if (err) throw err; // se muere y no sigue el programa
     console.log(`server escuchando en el puerto ${process.env.PORT}`);
+    console.log('a partir de: ', date);
 });
 
 module.exports.io = socketIO(server);

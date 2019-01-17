@@ -19,25 +19,30 @@ let Medico = require('../models/medicos'); // cargamos el modelo
 // en post man : http://localhost:3000/api/medico/123
 
 
-function getMedico(req, res) {
+function getMedico(req, resp) {
 
     let getMedicoId = req.params.id;
 
-    Medico.findById(getMedicoId, (err, medico) => {
+    Medico.findById(getMedicoId)
+        .populate('usuario', 'nombre email imagen')
+        .populate('hospital')
+        .exec((err, medico) => {
 
         if (err) {
             return resp.status(500).json({
                 ok: false,
-                mensaje: `no se encuentra el medico con el id: ${id}`
+                mensaje: 'error al buscar medico'
+                
             });
         }
         if (!medico) {
-            return res.status(404).json({
+            return resp.status(404).json({
                 ok: false,
-                mensaje: 'no hay medico'
+                mensaje: `no se encuentra el medico con el id: ${getMedicoId}`
+             
             });
         }
-        res.status(200).json({
+        resp.status(200).json({
             ok: true,
             mensaje: 'medico encontrado',
             medico: medico
@@ -54,7 +59,7 @@ function getMedico(req, res) {
 //http: //localhost:3000/api/medicos
 
 
-function getMedicos(req, res) {
+function getMedicos(req, resp) {
 
     // los query son los optativos en la url 
 
@@ -81,21 +86,21 @@ function getMedicos(req, res) {
         .exec((err, medicos) => {
 
             if (err) {
-                return res.status(500).json({ // internal error server
+                return resp.status(500).json({ // internal error server
                     ok: false,
                     mensaje: 'error en base de datos de medicos',
                     error: err
                 })
             }
             if (!medicos) {
-                return res.status(404).json({ // not found
+                return resp.status(404).json({ // not found
                     ok: false,
                     mensaje: 'no hay medicos en la base de datos'
                 })
             }
-            Medico.count({}, (err, conteo) => {
+            Medico.countDocuments({}, (err, conteo) => {
 
-                res.status(200).json({ // ok 
+                resp.status(200).json({ // ok 
                     ok: true,
                     medicos: medicos,
                     total: conteo
@@ -121,7 +126,7 @@ function getMedicos(req, res) {
 // pero existe una lib que toma la info se envia  y crea un obj de js : body-parser que es un middle
 
 
-function crearMedico(req, res) {
+function crearMedico(req, resp) {
 
 
     console.log("estamos creando un medico");
@@ -139,7 +144,7 @@ function crearMedico(req, res) {
     medico.save((err, medicoDB) => {
 
         if (err) { // colocando el return se sale y no sigue 
-            return res.status(400).json({ // bad request
+            return resp.status(400).json({ // bad request
                 ok: false,
                 mensaje: 'error al crear un medico',
                 error: err
@@ -147,12 +152,12 @@ function crearMedico(req, res) {
         }
 
         if (!medicoDB) {
-            return res.status(404).json({ // not found 
+            return resp.status(404).json({ // not found 
                 ok: false,
                 mensaje: 'no se pudo crear el medico',
             });
         }
-        res.status(201).json({ // recurso creado
+        resp.status(201).json({ // recurso creado
             ok: true,
             medico: medicoDB,
             usuarioCreador: req.usuario // es el usuario que esta en el token 
@@ -170,7 +175,7 @@ function crearMedico(req, res) {
 // en postman http://localhost:3000/api/medico/121
 // en el body llenamos distintas key y values en formato urlencoded
 
-function updateMedico(req, res) {
+function updateMedico(req, resp) {
     // metodo put  ...llega por body
 
     let update = req.body;
@@ -179,7 +184,7 @@ function updateMedico(req, res) {
     Medico.findById(medicoId, (err, medicoDB) => {
 
         if (err) {
-            return res.status(500).json({ // internal server
+            return resp.status(500).json({ // internal server
                 ok: false,
                 mensaje: 'el medico con el id' + medicoId + 'no existe',
                 errors: err
@@ -187,7 +192,7 @@ function updateMedico(req, res) {
         }
 
         if (!medicoDB) {
-            return res.status(400).json({ // bad request
+            return resp.status(400).json({ // bad request
                 ok: false,
                 mensaje: 'no se pudo actualizar el medico con el id :' + medicoId
             });
@@ -199,13 +204,13 @@ function updateMedico(req, res) {
         medicoDB.save((err, medicoUpdated) => {
 
             if (err) {
-                return res.status(400).json({ // bad request
+                return resp.status(400).json({ // bad request
                     ok: false,
                     mensaje: 'error al actualizar el medico',
                     error: err
                 });
             }
-            res.status(200).json({ // OK
+            resp.status(200).json({ // OK
                 update: true,
                 medico: medicoUpdated
             });
@@ -222,32 +227,32 @@ function updateMedico(req, res) {
 ////////////////////////////////////////////////////
 // en postman http://localhost:3000/api/medico/121
 
-function borrarMedico(req, res) {
+function borrarMedico(req, resp) {
 
     var medicoId = req.params.id;
 
     Medico.findById(medicoId, (err, medico) => {
 
         if (err) {
-            return res.status(500).json({
+            return resp.status(500).json({
                 ok: false,
-                mensaje: `no se encuentra el medico con el id: ${id}`
+                mensaje: `no se encuentra el medico con el id: ${medicoId}`
             });
         }
         if (!medico) {
-            return res.status(404).json({
+            return resp.status(404).json({
                 ok: false,
                 mensaje: 'no hay medico para borrar'
             });
         }
         medico.remove((err) => {
             if (err) {
-                return res.status(500).json({
+                return resp.status(500).json({
                     ok: false,
                     mensaje: 'no se ha podido borrar el medico'
                 });
             }
-            res.status(200).json({
+            resp.status(200).json({
                 ok: true,
                 mensaje: 'medico borrado',
                 medico: medico
@@ -266,7 +271,7 @@ function borrarMedico(req, res) {
 /////////////////////////////////////////////////////////////////////
 // en post man : http://localhost:3000/api/medicos/santollani
 
-function buscarMedicos(req, res) {
+function buscarMedicos(req, resp) {
 
     let termino = req.params.termino;
     // mandamos una expresion regular para ser usada como filtro
@@ -279,13 +284,13 @@ function buscarMedicos(req, res) {
     Medico.find({ nombre: regex })
         .exec((err, medicos) => {
             if (err) { // colocando el return se sale y no sigue 
-                return res.status(500).json({
+                return resp.status(500).json({
                     ok: false,
                     mensaje: 'error en base de datos de medicos',
                     error: err
                 });
             }
-            res.json({
+            resp.json({
                 ok: true,
                 medicos
             })

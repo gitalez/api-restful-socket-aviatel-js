@@ -10,7 +10,7 @@ const uniqueValidator = require('mongoose-unique-validator');
 
 // con este objeto permito los roles siguiente
 let rolesValidos = {
-    values: ['consumer', 'dealer', 'usuario', 'admin', 'super'],
+    values: ['consumer', 'cliente', 'empleado', 'admin', 'super', 'iot'],
     messages: '{VALUE} no es un role valido' // value es lo que la persona escribe
 };
 
@@ -90,7 +90,7 @@ usuarioSchema.methods.toJSON = function() {
 // importamos con npm el unique validator
 // le decimos al usuarioschema que use el plugin unique mediante el mensaje 
 // path reemplaza la propiedad del campo 
-usuarioSchema.plugin(uniqueValidator, { message: '{PATH} debe ser unico' });
+usuarioSchema.plugin(uniqueValidator, { message: '{PATH} ya registrado'});
 
 // exportamos este modelo como Usuario que va a tener toda la configuracion de usuarioSchema
 module.exports = mongoose.model('Usuario', usuarioSchema);

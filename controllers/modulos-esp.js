@@ -59,7 +59,7 @@ function cantidadDeModulos(req, resp) {
             })
         }
 
-        Esp.count({}, (err, conteo) => {
+        Esp.countDocuments({}, (err, conteo) => {
 
             resp.status(200).json({ // ok 
                 ok: true,
@@ -114,7 +114,7 @@ function getMisEsps(req, resp) {
                 })
             }
 
-            Esp.count({ usuario: id }, (err, conteo) => {
+            Esp.countDocuments({ usuario: id }, (err, conteo) => {
 
                 resp.status(200).json({ // ok 
                     ok: true,
@@ -176,7 +176,7 @@ function getEsps(req, resp) {
                 })
             }
 
-            Esp.count({}, (err, conteo) => {
+            Esp.countDocuments({}, (err, conteo) => {
 
                 resp.status(200).json({ // ok 
                     ok: true,

@@ -83,7 +83,7 @@ function getMisControles(req, resp) {
                 })
             }
 
-            Control.count({ usuario: id }, (err, conteo) => {
+            Control.countDocuments({ usuario: id }, (err, conteo) => {
 
                 resp.status(200).json({ // ok 
                     ok: true,
@@ -115,7 +115,7 @@ function cantidadDeControles(req, resp) {
             })
         }
 
-        Control.count({}, (err, conteo) => {
+        Control.countDocuments({}, (err, conteo) => {
 
             resp.status(200).json({ // ok 
                 ok: true,
@@ -168,7 +168,7 @@ function getControles(req, resp) {
                 })
             }
 
-            Control.count({}, (err, conteo) => {
+            Control.countDocuments({}, (err, conteo) => {
 
                 resp.status(200).json({ // ok 
                     ok: true,

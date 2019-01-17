@@ -55,6 +55,7 @@ let verificaToken = (request, response, next) => {
             return response.status(401).json({ // no autorizado
 
                 ok: false,
+                mensaje: 'token no valido',
                 err: {
                     message: 'token no valido'
                 }
@@ -86,6 +87,39 @@ let verificaAdmin_Role_Super = (request, response, next) => {
             ok: false,
             error: {
                 message: 'este usuario no es administrador'
+            }
+        });
+    };
+
+};
+
+
+//===================================
+// verificar AdminRole o super o mismo usuario 
+//==================================
+
+let verificaAdmin_Role_Super_MismoUsuario = (request, response, next) => {
+
+    let usuario = request.usuario; 
+    let id = request.params.id; 
+
+    // request usuario es el que viene en el token
+    // usuario._id es el id que  se decodifico  en el token 
+    // id es el is que viene en la url 
+
+    console.log('el rol es : ' + usuario.role);
+    console.log('el id que viene en la url es : ' + id);
+    console.log('el id que viene en el token : ' + usuario._id);
+   
+
+    if (usuario.role === 'admin' || usuario.role === 'super' || usuario._id === id ) {
+        next();
+    } else {
+        return response.json({
+
+            ok: false,
+            error: {
+                message: 'este usuario no es administrador ni es el mismo usuario'
             }
         });
     };
@@ -158,5 +192,6 @@ module.exports = {
     verificaToken,
     verificaAdmin_Role_Super,
     verificaTokenImg,
-    verificaSuper
+    verificaSuper,
+    verificaAdmin_Role_Super_MismoUsuario
 }
